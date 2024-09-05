@@ -65,9 +65,6 @@ void adicionarFornecedor(Produto produtos[], int num_produtos) {
             if (produtos[i].num_fornecedores >= MAX_FORNECEDORES) {
                 printf("Não foi possível adicionar fornecedores, pois já tem o limite.");
             }
-        }
-
-    
         //pedir dados para o novo fornecedor
         Fornecedor novo_fornecedor;
 
@@ -82,6 +79,10 @@ void adicionarFornecedor(Produto produtos[], int num_produtos) {
 
         produtos[i].fornecedores[produtos[i].num_fornecedores] = novo_fornecedor;
         produtos[i].num_fornecedores++;
+        printf("Fornecedor adicionado!\n");
+        }
+
+        
     }
 }
 
@@ -147,16 +148,71 @@ void alterarPrecoVenda(Produto produtos[], int num_produtos) {
     }
 }
 
-void pesquisarMelhorFornedor() {
+void pesquisarMelhorFornedor(Produto produtos[], int num_produtos) {
+    char nome_produto[100];
+    printf("Digite o nome do produto: ");
+    scanf("%s", nome_produto);
+
+    for (int i = 0; i < num_produtos; i++) {
+        if (strcmp(produtos[i].nome, nome_produto) == 0) {
+            if (produtos[i].num_fornecedores == 0) {
+                printf("Não foi possível encontrar fornecedor para este produto.");
+            }
+            Fornecedor melhor_fornecedor = produtos[i].fornecedores[0];
+            for (int j = 1; j < produtos[i].num_fornecedores; j++) {
+                if (produtos[i].fornecedores[j].preco_sugerido < melhor_fornecedor.preco_sugerido) {
+                    melhor_fornecedor = produtos[i].fornecedores[j];
+                }
+            }
+            printf("Melhor Fornecedor: %s\nPreco: %.2f\nPrazo de Entrega: %d\n", melhor_fornecedor.nome, melhor_fornecedor.preco_sugerido, melhor_fornecedor.prazo_entrega);
+        }
+
+    }
 }
 
-void pesquisarProdutoMaiorLucro() {
+void pesquisarProdutoMaiorLucro(Produto produtos[], int num_produtos) {
+    Produto *produto_maior_lucro = &produtos[0];
+    float maior_lucro = produto_maior_lucro->preco_venda - produto_maior_lucro->fornecedores->preco_sugerido;
+
+    for (int i = 0; i < num_produtos; i++) {
+        for (int j = 0; j < produtos[i].num_fornecedores; j++) {
+            float lucro = produtos[i].preco_venda - produtos[i].fornecedores[j].preco_sugerido;
+            if (lucro > maior_lucro) {
+                maior_lucro = lucro;
+                produto_maior_lucro = &produtos[i];
+            }
+        }
+    }
+    printf("Produto com maior lucro: %s\nLucro: %.2f", produto_maior_lucro->nome, maior_lucro);
 }
 
-void verificarSatisfacaoEncomenda() {
+void verificarSatisfacaoEncomenda(Produto produtos[], int num_produtos) {
+    char nome_produto[100];
+    int quant_desejada, prazo_desejado;
+
+    printf("Digite o nome do produto: ");
+    scanf("%s", nome_produto);
+    printf("Digite a quantidade desejada do produto: ");
+    scanf("%d", &quant_desejada);
+    printf("Digite o prazo desejado para o produto: ");
+    scanf("%d", &prazo_desejado);
+
+    for (int i = 0; i < num_produtos; i++) {
+        if (strcmp(produtos[i].nome, nome_produto) == 0) {
+            if (produtos[i].estoque_existente >= quant_desejada) {
+                printf("O estoque satisfaz o pedido da encomenda.\n");
+            } else {
+                for (int j = 0; j < produtos[i].num_fornecedores; j++) {
+                    if (produtos[i].fornecedores[j].prazo_entrega <= prazo_desejado) {
+                        printf("O fornecedor '%s' satisfaz o pedido da encomenda.\n", produtos[i].fornecedores[j].nome);
+                    }
+                }
+                printf("Pedido da encomenda nao pode ser satisfeita.\n");
+            }
+        }
+    }
 }
-// lista_produtos = [ [produto], [produto], ... ]
-// [produto] = ['nome', 'preco', 'prazo']
+
 int main() {
     Produto produtos[MAX_PRODUTOS];
     int num_produtos = 0;
@@ -170,6 +226,9 @@ int main() {
         printf("4 - Retirar Produtos \n");
         printf("5 - Alterar Preco Sugerido \n");
         printf("6 - Alterar Preco de Venda \n");
+        printf("7 - Pesquisar Melhor Fornecedor \n");
+        printf("8 - Pesquisar Produto com Maior Lucro \n");
+        printf("9 - Verificar Satisfacao da Encomenda \n");
         printf("0 - Sair \n");
         printf("Escolha uma Opcao: ");
         scanf("%d", &opcao);
@@ -191,6 +250,15 @@ int main() {
                 break;
             case 6: 
                 alterarPrecoVenda(produtos, num_produtos);
+            case 7: 
+                pesquisarMelhorFornedor(produtos, num_produtos);
+                break;
+            case 8: 
+                pesquisarProdutoMaiorLucro(produtos, num_produtos);
+                break;
+            case 9:
+                verificarSatisfacaoEncomenda(produtos, num_produtos);
+                break;
             case 0: 
                 break;  
             default:

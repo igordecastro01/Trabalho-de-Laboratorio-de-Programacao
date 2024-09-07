@@ -2,8 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "funcoes.h"
-#define MAX_PRODUTOS 100
-#define MAX_FORNECEDORES 5
+
 
 int main() {
     Produto produtos[MAX_PRODUTOS];
@@ -11,7 +10,7 @@ int main() {
     int opcao;
 
     do {
-        printf("\nMenu de Opcoes: \n");
+        printf("Menu de Opcoes: \n");
         printf("1 - Acrescentar Produto: \n");
         printf("2 - Adicionar Fornecedor: \n");
         printf("3 - Listar Produtos \n");
@@ -31,6 +30,7 @@ int main() {
                 break;
             case 2:
                 adicionarFornecedor(produtos, num_produtos);
+                break;
             case 3: 
                 listarProdutos(produtos, num_produtos);
                 break;
@@ -42,6 +42,7 @@ int main() {
                 break;
             case 6: 
                 alterarPrecoVenda(produtos, num_produtos);
+                break;
             case 7: 
                 pesquisarMelhorFornedor(produtos, num_produtos);
                 break;
@@ -58,4 +59,6 @@ int main() {
                 break;
         }
     } while (opcao != 0);
+    
+    return 0;
 }

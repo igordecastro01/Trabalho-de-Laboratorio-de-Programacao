@@ -148,8 +148,8 @@ void adicionarFornecedorArquivo() {
                 // Copia os fornecedores antigos até encontrar o separador
                 while (fgets(linha, sizeof(linha), arquivo) && strcmp(linha, "---------------------------\n") != 0) {
                     fputs(linha, arquivo_temp);
-                    num_fornecedores_atualizados++;
                 }
+                num_fornecedores_atualizados++;
 
                 // Adicionar o novo fornecedor
                 Fornecedor novo_fornecedor;
@@ -541,6 +541,9 @@ int main() {
     int num_produtos = 0;
     int opcao;
 
+    char nome[100];
+    int ref;
+
 
     do {
         printf("\nMenu de Opcoes: \n");
@@ -568,8 +571,6 @@ int main() {
                 listarProdutosArquivoTxt();
                 break;
             case 4:
-                char nome[100];
-                int ref;
                 printf("Digite o nome do produto a ser removido: ");
                 scanf(" %[^\n]s", nome);
                 printf("Digite a referencia do produto a ser removido: ");

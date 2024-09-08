@@ -1,0 +1,10 @@
+Nome: Arroz
+Referencia: 554132
+Preco de Venda: 5.80
+Estoque: 80
+Numero de Fornecedores: 0
+Fornecedor 1:
+Nome: Matheus
+Preco sugerido: 45.00
+Prazo de entrega: 55 dias
+---------------------------

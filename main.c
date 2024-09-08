@@ -258,11 +258,289 @@ void apagarProdutoArquivoTxt(char nome[], int ref) {
     }
 }
 
+void mostrarPrecoSugerido() {
+    char nome_produto[100];
+    printf("Digite o nome do produto para ver o preço sugerido: ");
+    scanf(" %[^\n]s", nome_produto);
+
+    FILE *arquivo = fopen("produtos.txt", "r");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+        return;
+    }
+
+    char linha[256], nome_produto_arquivo[100];
+    float menor_preco = -1.0;
+    int produto_encontrado = 0;
+
+    while (fgets(linha, sizeof(linha), arquivo)) {
+        if (sscanf(linha, "Nome: %99[^\n]", nome_produto_arquivo) == 1) {
+            if (strcmp(nome_produto_arquivo, nome_produto) == 0) {
+                produto_encontrado = 1;
+
+                // Pula as informações até chegar nos fornecedores
+                for (int i = 0; i < 3; i++) {
+                    fgets(linha, sizeof(linha), arquivo);
+                }
+
+                while (fgets(linha, sizeof(linha), arquivo) && strstr(linha, "Fornecedor") != NULL) {
+                    float preco_sugerido;
+                    fgets(linha, sizeof(linha), arquivo); // Nome do fornecedor
+                    sscanf(fgets(linha, sizeof(linha), arquivo), "Preco sugerido: %f", &preco_sugerido); // Preço sugerido
+                    fgets(linha, sizeof(linha), arquivo); // Prazo de entrega
+
+                    if (menor_preco == -1 || preco_sugerido < menor_preco) {
+                        menor_preco = preco_sugerido;
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    if (produto_encontrado) {
+        if (menor_preco == -1) {
+            printf("Nenhum fornecedor encontrado para o produto.\n");
+        } else {
+            printf("O menor preço sugerido para %s é: R$ %.2f\n", nome_produto, menor_preco);
+        }
+    } else {
+        printf("Produto não encontrado.\n");
+    }
+
+    fclose(arquivo);
+}
+
+void alterarPrecoVenda() {
+    char nome_produto[100];
+    printf("Digite o nome do produto para alterar o preço de venda: ");
+    scanf(" %[^\n]s", nome_produto);
+
+    float novo_preco;
+    printf("Digite o novo preço de venda: ");
+    scanf("%f", &novo_preco);
+
+    FILE *arquivo = fopen("produtos.txt", "r");
+    FILE *arquivo_temp = fopen("produtos_temp.txt", "w");
+
+    if (arquivo == NULL || arquivo_temp == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+        return;
+    }
+
+    char linha[256];
+    char nome_produto_arquivo[100];
+    int produto_encontrado = 0;
+
+    while (fgets(linha, sizeof(linha), arquivo)) {
+        fputs(linha, arquivo_temp);
+        if (sscanf(linha, "Nome: %99[^\n]", nome_produto_arquivo) == 1) {
+            if (strcmp(nome_produto_arquivo, nome_produto) == 0) {
+                produto_encontrado = 1;
+
+                // Copia as informações do produto até chegar no preço de venda
+                for (int i = 0; i < 2; i++) {
+                    fgets(linha, sizeof(linha), arquivo);
+                    fputs(linha, arquivo_temp);
+                }
+
+                // Altera o preço de venda
+                fprintf(arquivo_temp, "Preco de venda: %.2f\n", novo_preco);
+                fgets(linha, sizeof(linha), arquivo); // Pula a linha do preço antigo
+
+                continue;
+            }
+        }
+    }
+
+    fclose(arquivo);
+    fclose(arquivo_temp);
+
+    if (produto_encontrado) {
+        remove("produtos.txt");
+        rename("produtos_temp.txt", "produtos.txt");
+        printf("Preço de venda atualizado com sucesso!\n");
+    } else {
+        remove("produtos_temp.txt");
+        printf("Produto não encontrado.\n");
+    }
+}
+
+
+void pesquisarMelhorFornecedor() {
+    char nome_produto[100];
+    printf("Digite o nome do produto para pesquisar o melhor fornecedor: ");
+    scanf(" %[^\n]s", nome_produto);
+
+    FILE *arquivo = fopen("produtos.txt", "r");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+        return;
+    }
+
+    char linha[256], nome_produto_arquivo[100], melhor_fornecedor[100];
+    float menor_preco = -1.0;
+    int produto_encontrado = 0;
+
+    while (fgets(linha, sizeof(linha), arquivo)) {
+        if (sscanf(linha, "Nome: %99[^\n]", nome_produto_arquivo) == 1) {
+            if (strcmp(nome_produto_arquivo, nome_produto) == 0) {
+                produto_encontrado = 1;
+
+                for (int i = 0; i < 3; i++) {
+                    fgets(linha, sizeof(linha), arquivo);
+                }
+
+                while (fgets(linha, sizeof(linha), arquivo) && strstr(linha, "Fornecedor") != NULL) {
+                    char fornecedor[100];
+                    float preco_sugerido;
+                    sscanf(fgets(linha, sizeof(linha), arquivo), "Nome: %99[^\n]", fornecedor);
+                    sscanf(fgets(linha, sizeof(linha), arquivo), "Preco sugerido: %f", &preco_sugerido);
+
+                    if (menor_preco == -1 || preco_sugerido < menor_preco) {
+                        menor_preco = preco_sugerido;
+                        strcpy(melhor_fornecedor, fornecedor);
+                    }
+                    fgets(linha, sizeof(linha), arquivo); // Prazo de entrega
+                }
+                break;
+            }
+        }
+    }
+
+    if (produto_encontrado) {
+        if (menor_preco == -1) {
+            printf("Nenhum fornecedor encontrado.\n");
+        } else {
+            printf("O melhor fornecedor para %s é: %s com preço de R$ %.2f\n", nome_produto, melhor_fornecedor, menor_preco);
+        }
+    } else {
+        printf("Produto não encontrado.\n");
+    }
+
+    fclose(arquivo);
+}
+
+
+void pesquisarProdutoMaiorLucro() {
+    FILE *arquivo = fopen("produtos.txt", "r");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+        return;
+    }
+
+    char linha[256], nome_produto_arquivo[100], produto_maior_lucro[100];
+    float maior_lucro = -1.0;
+
+    while (fgets(linha, sizeof(linha), arquivo)) {
+        if (sscanf(linha, "Nome: %99[^\n]", nome_produto_arquivo) == 1) {
+            float preco_venda;
+            float menor_preco = -1.0;
+
+            // Pula até chegar no preço de venda
+            for (int i = 0; i < 2; i++) {
+                fgets(linha, sizeof(linha), arquivo);
+            }
+            sscanf(linha, "Preco de venda: %f", &preco_venda);
+
+            // Pula até os fornecedores
+            for (int i = 0; i < 1; i++) {
+                fgets(linha, sizeof(linha), arquivo);
+            }
+
+            while (fgets(linha, sizeof(linha), arquivo) && strstr(linha, "Fornecedor") != NULL) {
+                float preco_sugerido;
+                fgets(linha, sizeof(linha), arquivo); // Nome do fornecedor
+                sscanf(fgets(linha, sizeof(linha), arquivo), "Preco sugerido: %f", &preco_sugerido);
+                fgets(linha, sizeof(linha), arquivo); // Prazo de entrega
+
+                if (menor_preco == -1 || preco_sugerido < menor_preco) {
+                    menor_preco = preco_sugerido;
+                }
+            }
+
+            if (menor_preco != -1) {
+                float lucro = preco_venda - menor_preco;
+                if (lucro > maior_lucro) {
+                    maior_lucro = lucro;
+                    strcpy(produto_maior_lucro, nome_produto_arquivo);
+                }
+            }
+        }
+    }
+
+    if (maior_lucro != -1) {
+        printf("O produto com maior lucro é: %s com lucro de R$ %.2f\n", produto_maior_lucro, maior_lucro);
+    } else {
+        printf("Nenhum produto encontrado com fornecedores.\n");
+    }
+
+    fclose(arquivo);
+}
+
+void verificarSatisfacaoEncomenda() {
+    char nome_produto[100];
+    printf("Digite o nome do produto para verificar a satisfação da encomenda: ");
+    scanf(" %[^\n]s", nome_produto);
+
+    int prazo_desejado;
+    printf("Digite o prazo desejado de entrega (em dias): ");
+    scanf("%d", &prazo_desejado);
+
+    FILE *arquivo = fopen("produtos.txt", "r");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+        return;
+    }
+
+    char linha[256], nome_produto_arquivo[100];
+    int produto_encontrado = 0;
+
+    while (fgets(linha, sizeof(linha), arquivo)) {
+        if (sscanf(linha, "Nome: %99[^\n]", nome_produto_arquivo) == 1) {
+            if (strcmp(nome_produto_arquivo, nome_produto) == 0) {
+                produto_encontrado = 1;
+
+                // Pular informações até chegar aos fornecedores
+                for (int i = 0; i < 3; i++) {
+                    fgets(linha, sizeof(linha), arquivo);
+                }
+
+                // Verificar prazo de entrega dos fornecedores
+                while (fgets(linha, sizeof(linha), arquivo) && strstr(linha, "Fornecedor") != NULL) {
+                    char nome_fornecedor[100];
+                    int prazo_entrega;
+
+                    fgets(linha, sizeof(linha), arquivo); // Nome do fornecedor
+                    sscanf(linha, "Nome: %99[^\n]", nome_fornecedor);
+                    fgets(linha, sizeof(linha), arquivo); // Preço sugerido
+                    sscanf(fgets(linha, sizeof(linha), arquivo), "Prazo de entrega: %d", &prazo_entrega);
+
+                    if (prazo_entrega <= prazo_desejado) {
+                        printf("Fornecedor %s atende ao prazo desejado com entrega em %d dias.\n", nome_fornecedor, prazo_entrega);
+                    } else {
+                        printf("Fornecedor %s não atende ao prazo desejado. Entrega em %d dias.\n", nome_fornecedor, prazo_entrega);
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    if (!produto_encontrado) {
+        printf("Produto não encontrado.\n");
+    }
+
+    fclose(arquivo);
+}
+
+
 
 int main() {
     Produto produtos[MAX_PRODUTOS];
     int num_produtos = 0;
     int opcao;
+
 
     do {
         printf("\nMenu de Opcoes: \n");
@@ -289,6 +567,29 @@ int main() {
             case 3: 
                 listarProdutosArquivoTxt();
                 break;
+            case 4:
+                char nome[100];
+                int ref;
+                printf("Digite o nome do produto a ser removido: ");
+                scanf(" %[^\n]s", nome);
+                printf("Digite a referencia do produto a ser removido: ");
+                scanf("%d", &ref);
+                apagarProdutoArquivoTxt(nome, ref);
+                break;
+            case 5:
+                mostrarPrecoSugerido();
+                break;
+            case 6:
+                alterarPrecoVenda();
+                break;
+            case 7:
+                pesquisarMelhorFornecedor();
+                break;
+            case 8:
+                pesquisarProdutoMaiorLucro();
+                break;
+            case 9:
+                verificarSatisfacaoEncomenda();
             case 0:
                 break;  
             default:

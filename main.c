@@ -65,24 +65,22 @@ void adicionarFornecedor(Produto produtos[], int num_produtos) {
             if (produtos[i].num_fornecedores >= MAX_FORNECEDORES) {
                 printf("Não foi possível adicionar fornecedores, pois já tem o limite.");
             }
-        //pedir dados para o novo fornecedor
-        Fornecedor novo_fornecedor;
+            //pedir dados para o novo fornecedor
+            Fornecedor novo_fornecedor;
 
-        printf("Digite o nome do novo fornecedor: ");
-        scanf("%s", novo_fornecedor.nome);
+            printf("Digite o nome do novo fornecedor: ");
+            scanf("%s", novo_fornecedor.nome);
 
-        printf("Digite o preco sugerido do novo fornecedor: ");
-        scanf("%f", &novo_fornecedor.preco_sugerido);
+            printf("Digite o preco sugerido do novo fornecedor: ");
+            scanf("%f", &novo_fornecedor.preco_sugerido);
 
-        printf("Digite o prazo de entrega do novo fornecedor: ");
-        scanf("%d", &novo_fornecedor.prazo_entrega);
+            printf("Digite o prazo de entrega do novo fornecedor: ");
+            scanf("%d", &novo_fornecedor.prazo_entrega);
 
-        produtos[i].fornecedores[produtos[i].num_fornecedores] = novo_fornecedor;
-        produtos[i].num_fornecedores++;
-        printf("Fornecedor adicionado!\n");
-        }
-
-        
+            produtos[i].fornecedores[produtos[i].num_fornecedores] = novo_fornecedor;
+            produtos[i].num_fornecedores++;
+            printf("Fornecedor adicionado!\n");
+            }
     }
 }
 
@@ -250,6 +248,7 @@ int main() {
                 break;
             case 6: 
                 alterarPrecoVenda(produtos, num_produtos);
+                break;
             case 7: 
                 pesquisarMelhorFornedor(produtos, num_produtos);
                 break;

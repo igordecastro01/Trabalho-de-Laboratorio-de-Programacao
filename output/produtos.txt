@@ -1,0 +1,6 @@
+Nome: produto1
+Referencia: 1234
+Preco de Venda: 19.99
+Estoque: 100
+Numero de Fornecedores: 0
+---------------------------

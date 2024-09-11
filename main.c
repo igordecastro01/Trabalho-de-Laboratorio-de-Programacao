@@ -108,10 +108,10 @@ void criarProduto(Produto produtos[], int *num_produtos) {
     salvarProdutosArquivoTxt(produtos, *num_produtos);
 }
 
-void adicionarFornecedorArquivo() {
+void adicionarFornecedorArquivo(Produto produtos[], int num_produtos) {
     char nome_produto[100];
     printf("Digite o nome do produto para adicionar o fornecedor: ");
-<<<<<<< HEAD
+// <<<<<<< HEAD
     scanf("%s", nome_produto);
     // verificar se já tem fornecedores máximos
     for (int i = 0; i < num_produtos; i++) {
@@ -158,7 +158,7 @@ void retirarProdutos(Produto produtos[], int *num_produtos) {
             (*num_produtos)--;
         }
         printf("O produto foi retirado com sucesso!");
-=======
+// =======
     scanf(" %[^\n]s", nome_produto); // Permitir espaços no nome do produto
 
     // Abrir o arquivo original e criar um temporário para atualizar
@@ -168,7 +168,7 @@ void retirarProdutos(Produto produtos[], int *num_produtos) {
     if (arquivo == NULL || arquivo_temp == NULL) {
         printf("Erro ao abrir o arquivo.\n");
         return;
->>>>>>> e7d8b6384fdcac07ef0b5f942d2f29aa24d55cc9
+// >>>>>>> e7d8b6384fdcac07ef0b5f942d2f29aa24d55cc9
     }
 
     char linha[256];
@@ -244,6 +244,7 @@ void retirarProdutos(Produto produtos[], int *num_produtos) {
         remove("produtos_temp.txt");
         printf("Produto nao encontrado no arquivo!\n");
     }
+}
 }
 
 
@@ -614,7 +615,7 @@ int main() {
                 criarProduto(produtos, &num_produtos);
                 break;
             case 2:
-                adicionarFornecedorArquivo();
+                adicionarFornecedorArquivo(produtos, num_produtos);
                 break;
             case 3: 
                 listarProdutosArquivoTxt();
@@ -629,19 +630,11 @@ int main() {
             case 5:
                 mostrarPrecoSugerido();
                 break;
-<<<<<<< HEAD
             case 6: 
                 alterarPrecoVenda(produtos, num_produtos);
                 break;
             case 7: 
-                pesquisarMelhorFornedor(produtos, num_produtos);
-=======
-            case 6:
-                alterarPrecoVenda();
->>>>>>> e7d8b6384fdcac07ef0b5f942d2f29aa24d55cc9
-                break;
-            case 7:
-                pesquisarMelhorFornecedor();
+                pesquisarMelhorFornecedor(produtos, num_produtos);
                 break;
             case 8:
                 pesquisarProdutoMaiorLucro();
@@ -655,6 +648,4 @@ int main() {
                 break;
         }
     } while (opcao != 0);
-    
-    return 0;
 }

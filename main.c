@@ -108,9 +108,57 @@ void criarProduto(Produto produtos[], int *num_produtos) {
     salvarProdutosArquivoTxt(produtos, *num_produtos);
 }
 
-void adicionarFornecedorArquivo() {
+void adicionarFornecedorArquivo(Produto produtos[], int *num_produtos) {
     char nome_produto[100];
     printf("Digite o nome do produto para adicionar o fornecedor: ");
+// <<<<<<< HEAD
+    scanf("%s", nome_produto);
+    // verificar se já tem fornecedores máximos
+    for (int i = 0; i < (*num_produtos); i++) {
+        if (strcmp(produtos[i].nome, nome_produto) == 0) {
+            if (produtos[i].num_fornecedores >= MAX_FORNECEDORES) {
+                printf("Não foi possível adicionar fornecedores, pois já tem o limite.");
+            }
+            //pedir dados para o novo fornecedor
+            Fornecedor novo_fornecedor;
+
+            printf("Digite o nome do novo fornecedor: ");
+            scanf("%s", novo_fornecedor.nome);
+
+            printf("Digite o preco sugerido do novo fornecedor: ");
+            scanf("%f", &novo_fornecedor.preco_sugerido);
+
+            printf("Digite o prazo de entrega do novo fornecedor: ");
+            scanf("%d", &novo_fornecedor.prazo_entrega);
+
+            produtos[i].fornecedores[produtos[i].num_fornecedores] = novo_fornecedor;
+            produtos[i].num_fornecedores++;
+            printf("Fornecedor adicionado!\n");
+            // apagar conteúdo e salvar de novo
+            FILE *arquivo = fopen("produtos.txt", "w");
+            fclose(arquivo);
+            salvarProdutosArquivoTxt(produtos, *num_produtos);
+            }
+    }
+}
+
+
+
+void retirarProdutos(Produto produtos[], int *num_produtos) {
+    // verificar nome do produto para ser retirado
+    char nome_produto[100];
+    printf("Digite o nome do produto para ser retirado: ");
+    scanf("%s", nome_produto);
+    // verificar se nome_produto é igual a um produto da lista e removê-lo
+    for (int i = 0; i < *num_produtos; i++) {
+        if (strcmp(produtos[i].nome, nome_produto) == 0)  {
+            for (int j = i; j < *num_produtos - 1; j++) {
+                produtos[j] = produtos[j + 1];
+            }
+            (*num_produtos)--;
+        }
+        printf("O produto foi retirado com sucesso!");
+// =======
     scanf(" %[^\n]s", nome_produto); // Permitir espaços no nome do produto
 
     // Abrir o arquivo original e criar um temporário para atualizar
@@ -120,6 +168,7 @@ void adicionarFornecedorArquivo() {
     if (arquivo == NULL || arquivo_temp == NULL) {
         printf("Erro ao abrir o arquivo.\n");
         return;
+// >>>>>>> e7d8b6384fdcac07ef0b5f942d2f29aa24d55cc9
     }
 
     char linha[256];
@@ -196,6 +245,7 @@ void adicionarFornecedorArquivo() {
         printf("Produto nao encontrado no arquivo!\n");
     }
 }
+}
 
 
 
@@ -270,7 +320,7 @@ void mostrarPrecoSugerido() {
     }
 
     char linha[256], nome_produto_arquivo[100];
-    float menor_preco = -1.0;
+    float menor_preco = 100;
     int produto_encontrado = 0;
 
     while (fgets(linha, sizeof(linha), arquivo)) {
@@ -339,14 +389,14 @@ void alterarPrecoVenda() {
                 produto_encontrado = 1;
 
                 // Copia as informações do produto até chegar no preço de venda
-                for (int i = 0; i < 2; i++) {
+                for (int i = 0; i < 1; i++) {
                     fgets(linha, sizeof(linha), arquivo);
                     fputs(linha, arquivo_temp);
                 }
 
                 // Altera o preço de venda
-                fprintf(arquivo_temp, "Preco de venda: %.2f\n", novo_preco);
-                fgets(linha, sizeof(linha), arquivo); // Pula a linha do preço antigo
+                fprintf(arquivo_temp, "Novo Preco de venda: %.2f\n", novo_preco);
+                
 
                 continue;
             }
@@ -565,7 +615,7 @@ int main() {
                 criarProduto(produtos, &num_produtos);
                 break;
             case 2:
-                adicionarFornecedorArquivo();
+                adicionarFornecedorArquivo(produtos, &num_produtos);
                 break;
             case 3: 
                 listarProdutosArquivoTxt();
@@ -580,11 +630,11 @@ int main() {
             case 5:
                 mostrarPrecoSugerido();
                 break;
-            case 6:
-                alterarPrecoVenda();
+            case 6: 
+                alterarPrecoVenda(produtos, num_produtos);
                 break;
-            case 7:
-                pesquisarMelhorFornecedor();
+            case 7: 
+                pesquisarMelhorFornecedor(produtos, num_produtos);
                 break;
             case 8:
                 pesquisarProdutoMaiorLucro();
@@ -598,6 +648,4 @@ int main() {
                 break;
         }
     } while (opcao != 0);
-    
-    return 0;
 }

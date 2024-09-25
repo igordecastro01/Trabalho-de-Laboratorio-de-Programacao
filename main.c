@@ -109,15 +109,11 @@ void criarProduto(Produto produtos[], int *num_produtos) {
     // Salva o produto no arquivo
     salvarProdutosArquivoTxt(produtos, *num_produtos);
 }
-
-<<<<<<< HEAD
 void adicionarFornecedorArquivo(Produto produtos[], int num_produtos) {
-=======
-void adicionarFornecedor(Produto produtos[], int *num_produtos) {
->>>>>>> fd4ef75fb00e05c3eb62be11e45a44212bf9267f
+
     char nome_produto[100];
     printf("Digite o nome do produto para adicionar o fornecedor: ");
-// <<<<<<< HEAD
+
     scanf("%s", nome_produto);
     // verificar se já tem fornecedores máximos
     for (int i = 0; i < num_produtos; i++) {
@@ -164,10 +160,10 @@ void retirarProdutos(Produto produtos[], int *num_produtos) {
             (*num_produtos)--;
         }
         printf("O produto foi retirado com sucesso!");
-// =======
+
     scanf(" %[^\n]s", nome_produto); // Permitir espaços no nome do produto
 
-<<<<<<< HEAD
+
     // Abrir o arquivo original e criar um temporário para atualizar
     FILE *arquivo = fopen("produtos.txt", "r");
     FILE *arquivo_temp = fopen("produtos_temp.txt", "w");
@@ -175,7 +171,6 @@ void retirarProdutos(Produto produtos[], int *num_produtos) {
     if (arquivo == NULL || arquivo_temp == NULL) {
         printf("Erro ao abrir o arquivo.\n");
         return;
-// >>>>>>> e7d8b6384fdcac07ef0b5f942d2f29aa24d55cc9
     }
 
     char linha[256];
@@ -233,13 +228,6 @@ void retirarProdutos(Produto produtos[], int *num_produtos) {
                     fputs(linha, arquivo_temp);
                 }
                 fputs(linha, arquivo_temp); // Copia o separador
-=======
-    for (int i = 0; i < *num_produtos; i++) {
-        if (strcmp(produtos[i].nome, nome_produto) == 0) {
-            if (produtos[i].num_fornecedores >= MAX_FORNECEDORES) {
-                printf("Não foi possível adicionar fornecedores, pois já tem o limite.");
-                return;
->>>>>>> fd4ef75fb00e05c3eb62be11e45a44212bf9267f
             }
 
             // Pedir dados para o novo fornecedor
@@ -268,25 +256,25 @@ void retirarProdutos(Produto produtos[], int *num_produtos) {
 }
 }
 
-void retirarProdutos(Produto produtos[], int *num_produtos) {
-    // verificar nome do produto para ser retirado
-    char nome_produto[100];
-    printf("Digite o nome do produto para ser retirado: ");
-    scanf(" %[^\n]s", nome_produto);
-    // verificar se nome_produto é igual a um produto da lista e removê-lo
-    for (int i = 0; i < *num_produtos; i++) {
-        if (strcmp(produtos[i].nome, nome_produto) == 0)  {
-            for (int j = i; j < *num_produtos - 1; j++) {
-                produtos[j] = produtos[j + 1];
-            }
-            (*num_produtos)--;
-            printf("O produto foi retirado com sucesso!");
-            salvarProdutosArquivoTxt(produtos, *num_produtos);
-            return;
-        }
-    }
-    printf("Produto não encontrado.\n");
-}
+// void retirarProdutos(Produto produtos[], int *num_produtos) {
+//     // verificar nome do produto para ser retirado
+//     char nome_produto[100];
+//     printf("Digite o nome do produto para ser retirado: ");
+//     scanf(" %[^\n]s", nome_produto);
+//     // verificar se nome_produto é igual a um produto da lista e removê-lo
+//     for (int i = 0; i < *num_produtos; i++) {
+//         if (strcmp(produtos[i].nome, nome_produto) == 0)  {
+//             for (int j = i; j < *num_produtos - 1; j++) {
+//                 produtos[j] = produtos[j + 1];
+//             }
+//             (*num_produtos)--;
+//             printf("O produto foi retirado com sucesso!");
+//             salvarProdutosArquivoTxt(produtos, *num_produtos);
+//             return;
+//         }
+//     }
+//     printf("Produto não encontrado.\n");
+// }
 
 void listarProdutosArquivoTxt() {
     FILE *arquivo = fopen("produtos.txt", "r"); // Abre o arquivo no modo leitura
@@ -774,11 +762,7 @@ int main() {
                 criarProduto(produtos, &num_produtos);
                 break;
             case 2:
-<<<<<<< HEAD
                 adicionarFornecedorArquivo(produtos, num_produtos);
-=======
-                adicionarFornecedor(produtos, &num_produtos);
->>>>>>> fd4ef75fb00e05c3eb62be11e45a44212bf9267f
                 break;
             case 3: 
                 listarProdutosArquivoTxt();
@@ -795,17 +779,10 @@ int main() {
                 alterarPrecoSugerido(produtos, num_produtos);
                 break;
             case 6: 
-<<<<<<< HEAD
                 alterarPrecoVenda(produtos, num_produtos);
                 break;
             case 7: 
                 pesquisarMelhorFornecedor(produtos, num_produtos);
-=======
-                alterarPrecoVenda();
-                break;
-            case 7: 
-                pesquisarMelhorFornecedor();
->>>>>>> fd4ef75fb00e05c3eb62be11e45a44212bf9267f
                 break;
             case 8:
                 pesquisarProdutoMaiorLucro();
@@ -820,9 +797,4 @@ int main() {
                 break;
         }
     } while (opcao != 0);
-<<<<<<< HEAD
-=======
-
-    return 0;
->>>>>>> fd4ef75fb00e05c3eb62be11e45a44212bf9267f
 }

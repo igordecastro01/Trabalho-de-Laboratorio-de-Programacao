@@ -21,25 +21,27 @@ typedef struct {
 } Produto;
 
 void salvarProdutosArquivoTxt(Produto produtos[], int num_produtos) {
-    FILE *arquivo = fopen("produtos.txt", "a"); // Abre o arquivo no modo append
+    FILE *arquivo = fopen("produtos.txt", "w"); // Abre o arquivo no modo escrita
     if (arquivo == NULL) {
         printf("Erro ao abrir o arquivo.\n");
         return;
     }
 
-    Produto p = produtos[num_produtos - 1]; // Salva apenas o último produto adicionado
-    fprintf(arquivo, "Nome: %s\n", p.nome);
-    fprintf(arquivo, "Referencia: %d\n", p.ref);
-    fprintf(arquivo, "Preco de Venda: %.2f\n", p.preco_venda);
-    fprintf(arquivo, "Estoque: %d\n", p.estoque_existente);
-    fprintf(arquivo, "Numero de Fornecedores: %d\n", p.num_fornecedores);
-    for (int j = 0; j < p.num_fornecedores; j++) {
-        fprintf(arquivo, "Fornecedor %d:\n", j + 1);
-        fprintf(arquivo, "\tNome: %s\n", p.fornecedores[j].nome);
-        fprintf(arquivo, "\tPreco Sugerido: %.2f\n", p.fornecedores[j].preco_sugerido);
-        fprintf(arquivo, "\tPrazo de Entrega: %d dias\n", p.fornecedores[j].prazo_entrega);
+    for (int i = 0; i < num_produtos; i++) {
+        Produto p = produtos[i];
+        fprintf(arquivo, "Nome: %s\n", p.nome);
+        fprintf(arquivo, "Referencia: %d\n", p.ref);
+        fprintf(arquivo, "Preco de venda: %.2f\n", p.preco_venda);
+        fprintf(arquivo, "Estoque: %d\n", p.estoque_existente);
+        fprintf(arquivo, "Numero de Fornecedores: %d\n", p.num_fornecedores);
+        for (int j = 0; j < p.num_fornecedores; j++) {
+            fprintf(arquivo, "Fornecedor %d:\n", j + 1);
+            fprintf(arquivo, "\tNome: %s\n", p.fornecedores[j].nome);
+            fprintf(arquivo, "\tPreco Sugerido: %.2f\n", p.fornecedores[j].preco_sugerido);
+            fprintf(arquivo, "\tPrazo de Entrega: %d dias\n", p.fornecedores[j].prazo_entrega);
+        }
+        fprintf(arquivo, "---------------------------\n"); // Separador entre produtos
     }
-    fprintf(arquivo, "---------------------------\n"); // Separador entre produtos
 
     fclose(arquivo);
 }
@@ -108,7 +110,11 @@ void criarProduto(Produto produtos[], int *num_produtos) {
     salvarProdutosArquivoTxt(produtos, *num_produtos);
 }
 
+<<<<<<< HEAD
 void adicionarFornecedorArquivo(Produto produtos[], int num_produtos) {
+=======
+void adicionarFornecedor(Produto produtos[], int *num_produtos) {
+>>>>>>> fd4ef75fb00e05c3eb62be11e45a44212bf9267f
     char nome_produto[100];
     printf("Digite o nome do produto para adicionar o fornecedor: ");
 // <<<<<<< HEAD
@@ -161,6 +167,7 @@ void retirarProdutos(Produto produtos[], int *num_produtos) {
 // =======
     scanf(" %[^\n]s", nome_produto); // Permitir espaços no nome do produto
 
+<<<<<<< HEAD
     // Abrir o arquivo original e criar um temporário para atualizar
     FILE *arquivo = fopen("produtos.txt", "r");
     FILE *arquivo_temp = fopen("produtos_temp.txt", "w");
@@ -226,29 +233,60 @@ void retirarProdutos(Produto produtos[], int *num_produtos) {
                     fputs(linha, arquivo_temp);
                 }
                 fputs(linha, arquivo_temp); // Copia o separador
+=======
+    for (int i = 0; i < *num_produtos; i++) {
+        if (strcmp(produtos[i].nome, nome_produto) == 0) {
+            if (produtos[i].num_fornecedores >= MAX_FORNECEDORES) {
+                printf("Não foi possível adicionar fornecedores, pois já tem o limite.");
+                return;
+>>>>>>> fd4ef75fb00e05c3eb62be11e45a44212bf9267f
             }
-        } else {
-            // Copia qualquer outra linha (não relacionada ao produto)
-            fputs(linha, arquivo_temp);
+
+            // Pedir dados para o novo fornecedor
+            Fornecedor novo_fornecedor;
+
+            printf("Digite o nome do novo fornecedor: ");
+            scanf(" %[^\n]s", novo_fornecedor.nome);
+
+            printf("Digite o preco sugerido do novo fornecedor: ");
+            scanf("%f", &novo_fornecedor.preco_sugerido);
+
+            printf("Digite o prazo de entrega do novo fornecedor: ");
+            scanf("%d", &novo_fornecedor.prazo_entrega);
+
+            produtos[i].fornecedores[produtos[i].num_fornecedores] = novo_fornecedor;
+            produtos[i].num_fornecedores++;
+            printf("Fornecedor adicionado!\n");
+
+            // Salvar o produto com o novo fornecedor
+            salvarProdutosArquivoTxt(produtos, *num_produtos);
+            return;
         }
     }
 
-    fclose(arquivo);
-    fclose(arquivo_temp);
+    printf("Produto não encontrado.\n");
+}
+}
 
-    if (produto_encontrado) {
-        remove("produtos.txt");
-        rename("produtos_temp.txt", "produtos.txt");
-        printf("Arquivo atualizado com sucesso!\n");
-    } else {
-        remove("produtos_temp.txt");
-        printf("Produto nao encontrado no arquivo!\n");
+void retirarProdutos(Produto produtos[], int *num_produtos) {
+    // verificar nome do produto para ser retirado
+    char nome_produto[100];
+    printf("Digite o nome do produto para ser retirado: ");
+    scanf(" %[^\n]s", nome_produto);
+    // verificar se nome_produto é igual a um produto da lista e removê-lo
+    for (int i = 0; i < *num_produtos; i++) {
+        if (strcmp(produtos[i].nome, nome_produto) == 0)  {
+            for (int j = i; j < *num_produtos - 1; j++) {
+                produtos[j] = produtos[j + 1];
+            }
+            (*num_produtos)--;
+            printf("O produto foi retirado com sucesso!");
+            salvarProdutosArquivoTxt(produtos, *num_produtos);
+            return;
+        }
     }
+    printf("Produto não encontrado.\n");
 }
-}
-
-
-
 
 void listarProdutosArquivoTxt() {
     FILE *arquivo = fopen("produtos.txt", "r"); // Abre o arquivo no modo leitura
@@ -308,57 +346,174 @@ void apagarProdutoArquivoTxt(char nome[], int ref) {
     }
 }
 
-void mostrarPrecoSugerido() {
-    char nome_produto[100];
-    printf("Digite o nome do produto para ver o preço sugerido: ");
-    scanf(" %[^\n]s", nome_produto);
-
+void carregarFornecedores(Produto produtos[], int *num_produtos) {
     FILE *arquivo = fopen("produtos.txt", "r");
     if (arquivo == NULL) {
         printf("Erro ao abrir o arquivo.\n");
         return;
     }
 
-    char linha[256], nome_produto_arquivo[100];
-    float menor_preco = -1.0;
-    int produto_encontrado = 0;
+    char linha[256];
+    int produto_atual = -1;
 
+    // Ler o arquivo linha por linha
     while (fgets(linha, sizeof(linha), arquivo)) {
-        if (sscanf(linha, "Nome: %99[^\n]", nome_produto_arquivo) == 1) {
+        if (strncmp(linha, "Nome:", 5) == 0) {
+            produto_atual++;
+            sscanf(linha, "Nome: %[^\n]s", produtos[produto_atual].nome);
+            
+            // Ler as próximas linhas do arquivo até obter todos os dados do produto
+            fgets(linha, sizeof(linha), arquivo); // Referência
+            sscanf(linha, "Referencia: %d", &produtos[produto_atual].ref);
+
+            fgets(linha, sizeof(linha), arquivo); // Preço de venda
+            sscanf(linha, "Preco de venda: %f", &produtos[produto_atual].preco_venda);
+
+            fgets(linha, sizeof(linha), arquivo); // Estoque
+            sscanf(linha, "Estoque: %d", &produtos[produto_atual].estoque_existente);
+
+            fgets(linha, sizeof(linha), arquivo); // Numero de Fornecedores
+            sscanf(linha, "Numero de Fornecedores: %d", &produtos[produto_atual].num_fornecedores);
+
+            // Inicializa o número de fornecedores para o produto
+            produtos[produto_atual].num_fornecedores = 0;
+        }
+
+        // Ler informações dos fornecedores se encontrado "Fornecedor"
+        if (strncmp(linha, "Fornecedor", 10) == 0) { 
+            int fornecedor_atual = produtos[produto_atual].num_fornecedores;
+
+            // Lê a linha com o nome do fornecedor
+            fgets(linha, sizeof(linha), arquivo); 
+
+            // Lê a linha com o preço sugerido
+            fgets(linha, sizeof(linha), arquivo);
+
+            // Lê a linha com o prazo de entrega
+            fgets(linha, sizeof(linha), arquivo); 
+
+            sscanf(linha, "\tPrazo de Entrega: %d dias\n", &produtos[produto_atual].fornecedores[fornecedor_atual].prazo_entrega); 
+
+            // Copia o nome do fornecedor
+            sscanf(linha, "\tNome: %[^\n]s", produtos[produto_atual].fornecedores[fornecedor_atual].nome);
+
+            // Ler o preço sugerido
+            sscanf(linha, "\tPreco Sugerido: %f\n", &produtos[produto_atual].fornecedores[fornecedor_atual].preco_sugerido);
+
+            // Incrementa o número de fornecedores
+            produtos[produto_atual].num_fornecedores++;
+        }
+    }
+
+    // Define o número de produtos carregados
+    *num_produtos = produto_atual + 1;
+
+    fclose(arquivo);
+}
+
+void alterarPrecoSugerido(Produto produtos[], int num_produtos) {
+    char nome_produto[100], nome_fornecedor[100];
+    float novo_preco;
+    
+    // Obter o nome do produto, nome do fornecedor e o novo preço sugerido
+    printf("Digite o nome do produto para alterar o preço sugerido: ");
+    scanf(" %[^\n]s", nome_produto);
+    printf("Digite o nome do fornecedor: ");
+    scanf(" %[^\n]s", nome_fornecedor);
+    printf("Digite o novo preço sugerido: ");
+    scanf("%f", &novo_preco);
+
+    FILE *arquivo = fopen("produtos.txt", "r");
+    FILE *temp = fopen("temp.txt", "w");
+    if (arquivo == NULL || temp == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+        return;
+    }
+
+    char linha[256], nome_produto_arquivo[100], nome_fornecedor_arquivo[100];
+    int produto_encontrado = 0;
+    int fornecedor_encontrado = 0;
+
+    // Ler o arquivo linha por linha e salvar no arquivo temporário
+    while (fgets(linha, sizeof(linha), arquivo)) {
+        // Copia a linha para o arquivo temporário, pois estamos a fazer uma cópia com alterações
+        fputs(linha, temp); 
+        
+        // Verifica se a linha atual é o nome de um produto
+        if (sscanf(linha, "Nome: %99[^\n]", nome_produto_arquivo) == 1) { 
             if (strcmp(nome_produto_arquivo, nome_produto) == 0) {
                 produto_encontrado = 1;
 
                 // Pula as informações até chegar nos fornecedores
-                for (int i = 0; i < 3; i++) {
-                    fgets(linha, sizeof(linha), arquivo);
+                for (int i = 0; i < 3; i++) { 
+                    fgets(linha, sizeof(linha), arquivo); 
+                    fputs(linha, temp); // Copia as linhas intermediárias
                 }
 
+                // Processa os fornecedores
                 while (fgets(linha, sizeof(linha), arquivo) && strstr(linha, "Fornecedor") != NULL) {
-                    float preco_sugerido;
-                    fgets(linha, sizeof(linha), arquivo); // Nome do fornecedor
-                    sscanf(fgets(linha, sizeof(linha), arquivo), "Preco sugerido: %f", &preco_sugerido); // Preço sugerido
-                    fgets(linha, sizeof(linha), arquivo); // Prazo de entrega
+                    // Lê o nome do fornecedor da linha atual
+                    fgets(linha, sizeof(linha), arquivo); // Lê a linha com o nome do fornecedor
+                    sscanf(linha, "\tNome: %[^\n]s", nome_fornecedor_arquivo); // Extrai o nome
 
-                    if (menor_preco == -1 || preco_sugerido < menor_preco) {
-                        menor_preco = preco_sugerido;
+                    // Verifica se o fornecedor é o que queremos alterar
+                    if (strcmp(nome_fornecedor_arquivo, nome_fornecedor) == 0) {
+                        fornecedor_encontrado = 1;
+
+                        // Lê o preço atual e escreve o novo preço no arquivo temporário
+                        fgets(linha, sizeof(linha), arquivo); 
+                        fprintf(temp, "Preco sugerido: %.2f\n", novo_preco); 
+
+                        // Lê o prazo de entrega e escreve no arquivo temporário
+                        fgets(linha, sizeof(linha), arquivo); 
+                        fputs(linha, temp);
+                    } else {
+                        // Se não for o fornecedor, copia as linhas normalmente
+                        fgets(linha, sizeof(linha), arquivo); 
+                        fputs(linha, temp); // Preço sugerido
+                        fgets(linha, sizeof(linha), arquivo);
+                        fputs(linha, temp); // Prazo de entrega
+                    }
+                }
+            }
+        } else {
+            // Copia as outras linhas que não são o produto
+            fputs(linha, temp); 
+        }
+    }
+
+    fclose(arquivo);
+    fclose(temp);
+
+    // Verifica se o produto e o fornecedor foram encontrados
+    if (produto_encontrado && fornecedor_encontrado) {
+        // Remove o arquivo original e renomeia o arquivo temporário
+        remove("produtos.txt");
+        rename("temp.txt", "produtos.txt");
+        printf("Preço sugerido alterado com sucesso!\n");
+
+        // Atualizar o vetor de produtos (não é estritamente necessário, mas pode ser útil para manter a sincronização)
+        for (int i = 0; i < num_produtos; i++) {
+            if (strcmp(produtos[i].nome, nome_produto) == 0) {
+                for (int j = 0; j < produtos[i].num_fornecedores; j++) {
+                    if (strcmp(produtos[i].fornecedores[j].nome, nome_fornecedor) == 0) {
+                        produtos[i].fornecedores[j].preco_sugerido = novo_preco;
+                        printf("Preço atualizado no vetor de produtos.\n");
+                        break;
                     }
                 }
                 break;
             }
         }
-    }
-
-    if (produto_encontrado) {
-        if (menor_preco == -1) {
-            printf("Nenhum fornecedor encontrado para o produto.\n");
-        } else {
-            printf("O menor preço sugerido para %s é: R$ %.2f\n", nome_produto, menor_preco);
-        }
     } else {
-        printf("Produto não encontrado.\n");
+        // Caso não tenha encontrado o produto ou fornecedor
+        remove("temp.txt"); // Remove o arquivo temporário
+        if (!produto_encontrado) {
+            printf("Produto não encontrado.\n");
+        } else if (!fornecedor_encontrado) {
+            printf("Fornecedor não encontrado para o produto especificado.\n");
+        }
     }
-
-    fclose(arquivo);
 }
 
 void alterarPrecoVenda() {
@@ -389,14 +544,14 @@ void alterarPrecoVenda() {
                 produto_encontrado = 1;
 
                 // Copia as informações do produto até chegar no preço de venda
-                for (int i = 0; i < 2; i++) {
+                for (int i = 0; i < 1; i++) {
                     fgets(linha, sizeof(linha), arquivo);
                     fputs(linha, arquivo_temp);
                 }
 
                 // Altera o preço de venda
                 fprintf(arquivo_temp, "Preco de venda: %.2f\n", novo_preco);
-                fgets(linha, sizeof(linha), arquivo); // Pula a linha do preço antigo
+                
 
                 continue;
             }
@@ -415,7 +570,6 @@ void alterarPrecoVenda() {
         printf("Produto não encontrado.\n");
     }
 }
-
 
 void pesquisarMelhorFornecedor() {
     char nome_produto[100];
@@ -471,7 +625,6 @@ void pesquisarMelhorFornecedor() {
     fclose(arquivo);
 }
 
-
 void pesquisarProdutoMaiorLucro() {
     FILE *arquivo = fopen("produtos.txt", "r");
     if (arquivo == NULL) {
@@ -520,7 +673,7 @@ void pesquisarProdutoMaiorLucro() {
     }
 
     if (maior_lucro != -1) {
-        printf("O produto com maior lucro é: %s com lucro de R$ %.2f\n", produto_maior_lucro, maior_lucro);
+        printf("O produto com maior lucro é: %s \n", produto_maior_lucro);
     } else {
         printf("Nenhum produto encontrado com fornecedores.\n");
     }
@@ -547,12 +700,13 @@ void verificarSatisfacaoEncomenda() {
     int produto_encontrado = 0;
 
     while (fgets(linha, sizeof(linha), arquivo)) {
-        if (sscanf(linha, "Nome: %99[^\n]", nome_produto_arquivo) == 1) {
+        // Verifica se a linha atual é o nome de um produto
+        if (sscanf(linha, "Nome: %99[^\n]", nome_produto_arquivo) == 1) { 
             if (strcmp(nome_produto_arquivo, nome_produto) == 0) {
                 produto_encontrado = 1;
 
-                // Pular informações até chegar aos fornecedores
-                for (int i = 0; i < 3; i++) {
+                // Pula as informações até chegar aos fornecedores
+                for (int i = 0; i < 3; i++) { 
                     fgets(linha, sizeof(linha), arquivo);
                 }
 
@@ -561,9 +715,14 @@ void verificarSatisfacaoEncomenda() {
                     char nome_fornecedor[100];
                     int prazo_entrega;
 
-                    fgets(linha, sizeof(linha), arquivo); // Nome do fornecedor
-                    sscanf(linha, "Nome: %99[^\n]", nome_fornecedor);
-                    fgets(linha, sizeof(linha), arquivo); // Preço sugerido
+                    // Lê o nome do fornecedor da linha atual
+                    fgets(linha, sizeof(linha), arquivo); // Lê a linha com o nome do fornecedor
+                    sscanf(linha, "\tNome: %[^\n]s", nome_fornecedor); // Extrai o nome
+
+                    // Lê o preço sugerido (ignorando a linha)
+                    fgets(linha, sizeof(linha), arquivo); 
+
+                    // Lê o prazo de entrega da linha atual
                     sscanf(fgets(linha, sizeof(linha), arquivo), "Prazo de entrega: %d", &prazo_entrega);
 
                     if (prazo_entrega <= prazo_desejado) {
@@ -584,8 +743,6 @@ void verificarSatisfacaoEncomenda() {
     fclose(arquivo);
 }
 
-
-
 int main() {
     Produto produtos[MAX_PRODUTOS];
     int num_produtos = 0;
@@ -594,6 +751,8 @@ int main() {
     char nome[100];
     int ref;
 
+    // Carrega produtos do arquivo
+    carregarFornecedores(produtos, &num_produtos);
 
     do {
         printf("\nMenu de Opcoes: \n");
@@ -601,7 +760,7 @@ int main() {
         printf("2 - Adicionar Fornecedor: \n");
         printf("3 - Listar Produtos \n");
         printf("4 - Retirar Produtos \n");
-        printf("5 - Alterar Preco Sugerido \n");
+        printf("5 - Alterar Preco Sugerido pelo fornecedor\n");
         printf("6 - Alterar Preco de Venda \n");
         printf("7 - Pesquisar Melhor Fornecedor \n");
         printf("8 - Pesquisar Produto com Maior Lucro \n");
@@ -615,7 +774,11 @@ int main() {
                 criarProduto(produtos, &num_produtos);
                 break;
             case 2:
+<<<<<<< HEAD
                 adicionarFornecedorArquivo(produtos, num_produtos);
+=======
+                adicionarFornecedor(produtos, &num_produtos);
+>>>>>>> fd4ef75fb00e05c3eb62be11e45a44212bf9267f
                 break;
             case 3: 
                 listarProdutosArquivoTxt();
@@ -628,19 +791,28 @@ int main() {
                 apagarProdutoArquivoTxt(nome, ref);
                 break;
             case 5:
-                mostrarPrecoSugerido();
+                //carregarFornecedores(produtos, &num_produtos); // já carregou no início
+                alterarPrecoSugerido(produtos, num_produtos);
                 break;
             case 6: 
+<<<<<<< HEAD
                 alterarPrecoVenda(produtos, num_produtos);
                 break;
             case 7: 
                 pesquisarMelhorFornecedor(produtos, num_produtos);
+=======
+                alterarPrecoVenda();
+                break;
+            case 7: 
+                pesquisarMelhorFornecedor();
+>>>>>>> fd4ef75fb00e05c3eb62be11e45a44212bf9267f
                 break;
             case 8:
                 pesquisarProdutoMaiorLucro();
                 break;
             case 9:
                 verificarSatisfacaoEncomenda();
+                break;
             case 0:
                 break;  
             default:
@@ -648,4 +820,9 @@ int main() {
                 break;
         }
     } while (opcao != 0);
+<<<<<<< HEAD
+=======
+
+    return 0;
+>>>>>>> fd4ef75fb00e05c3eb62be11e45a44212bf9267f
 }

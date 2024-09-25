@@ -256,26 +256,6 @@ void retirarProdutos(Produto produtos[], int *num_produtos) {
 }
 }
 
-// void retirarProdutos(Produto produtos[], int *num_produtos) {
-//     // verificar nome do produto para ser retirado
-//     char nome_produto[100];
-//     printf("Digite o nome do produto para ser retirado: ");
-//     scanf(" %[^\n]s", nome_produto);
-//     // verificar se nome_produto é igual a um produto da lista e removê-lo
-//     for (int i = 0; i < *num_produtos; i++) {
-//         if (strcmp(produtos[i].nome, nome_produto) == 0)  {
-//             for (int j = i; j < *num_produtos - 1; j++) {
-//                 produtos[j] = produtos[j + 1];
-//             }
-//             (*num_produtos)--;
-//             printf("O produto foi retirado com sucesso!");
-//             salvarProdutosArquivoTxt(produtos, *num_produtos);
-//             return;
-//         }
-//     }
-//     printf("Produto não encontrado.\n");
-// }
-
 void listarProdutosArquivoTxt() {
     FILE *arquivo = fopen("produtos.txt", "r"); // Abre o arquivo no modo leitura
     if (arquivo == NULL) {
